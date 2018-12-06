@@ -1,9 +1,11 @@
 'use strict';
-const util = require('util');
-const childProcess = require('child_process');
-const plist = require('plist');
 
+const util = require('util');
+const plist = require('plist');
+const childProcess = require('child_process');
 const execFileP = util.promisify(childProcess.execFile);
+
+const mdls = '/usr/bin/mdls';
 
 const parse = data => {
 	const object = plist.parse(data);
@@ -27,11 +29,11 @@ const parse = data => {
 };
 
 module.exports = async filePath => {
-	const {stdout} = await execFileP('mdls', ['-plist', '-', filePath]);
+	const {stdout} = await execFileP(mdls, ['-plist', '-', filePath]);
 	return parse(stdout.trim());
 };
 
 module.exports.sync = filePath => {
-	const stdout = childProcess.execFileSync('mdls', ['-plist', '-', filePath], {encoding: 'utf8'});
+	const stdout = childProcess.execFileSync(mdls, ['-plist', '-', filePath], {encoding: 'utf8'});
 	return parse(stdout.trim());
 };
